@@ -5,3 +5,4 @@ __pycache__/
 models/
 data/*.log
 data/darglobal_html/
+.vscode/

@@ -76,12 +76,14 @@ uvicorn app.main:app --port 7860
 | `GET` | `/api/health` | Liveness + configuration |
 | `GET` | `/api/stats` | Knowledge-base manifest |
 
-## Deploy (Hugging Face Spaces, free)
+## Deploy (Render, free)
 
-1. Create a Space → SDK **Docker**.
-2. Push this repository to the Space (the YAML header above configures it).
-3. Under *Settings → Variables and secrets*, add the secret `OPENROUTER_API_KEY`.
-4. The app goes live at `https://<user>-<space>.hf.space`.
+1. Push this repository to GitHub.
+2. Render dashboard → **New → Blueprint** → select the repo (`render.yaml` configures a free Docker web service).
+3. When prompted, paste `OPENROUTER_API_KEY`. The app goes live at `https://darglobal-wasalt-assistant.onrender.com`.
+
+The free plan sleeps after 15 minutes idle, so the first request afterwards takes about a minute.
+(A Hugging Face Space also works via the YAML header above, but Docker Spaces now require a PRO plan.)
 
 ## Data collection & compliance
 
