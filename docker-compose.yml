@@ -1,0 +1,7 @@
+services:
+  assistant:
+    build: .
+    image: darglobal-wasalt-assistant:latest
+    ports: ["7860:7860"]
+    env_file: .env
+    restart: unless-stopped

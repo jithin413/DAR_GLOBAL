@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Property Assistant · DarGlobal & Wasalt</title>
+<meta name="description" content="AI assistant answering questions about DarGlobal projects and Wasalt property listings.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<style>
+:root{
+  --bg:#f6f5f2;--panel:#ffffff;--ink:#1d1f23;--muted:#6b6f76;--line:#e6e3dc;
+  --brand:#0f3b47;--brand-ink:#ffffff;--accent:#b8893b;--user:#0f3b47;--user-ink:#fff;
+  --chip:#f1eee7;--code:#f3f1ec;--shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111315;--panel:#1a1d20;--ink:#e9e7e2;--muted:#9a9ea5;--line:#2a2e33;
+  --brand:#5fb3c4;--brand-ink:#0b1416;--accent:#d6aa5c;--user:#21414a;--user-ink:#eaf6f8;
+  --chip:#23272b;--code:#202428;--shadow:none;}}
+:root[data-theme="dark"]{
+  --bg:#111315;--panel:#1a1d20;--ink:#e9e7e2;--muted:#9a9ea5;--line:#2a2e33;
+  --brand:#5fb3c4;--brand-ink:#0b1416;--accent:#d6aa5c;--user:#21414a;--user-ink:#eaf6f8;
+  --chip:#23272b;--code:#202428;--shadow:none;}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 Inter,"IBM Plex Sans Arabic",system-ui,sans-serif;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-weight:700;letter-spacing:-.5px}
+header h1{font-size:16px;margin:0;font-weight:600}
+header .sub{font-size:12px;color:var(--muted)}
+header .sp{flex:1}
+.pill{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.pill b{color:var(--ink);font-weight:600}
+button.icon{background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;height:32px;padding:0 10px;cursor:pointer;font:inherit;font-size:13px}
+button.icon:hover{background:var(--chip)}
+main{flex:1;overflow-y:auto}
+.wrap{max-width:860px;margin:0 auto;padding:24px 16px 8px}
+.hero{text-align:center;padding:36px 0 12px}
+.hero h2{font-size:26px;margin:0 0 6px;letter-spacing:-.3px}
+.hero p{color:var(--muted);margin:0 auto 22px;max-width:560px}
+.suggest{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;text-align:left}
+.suggest button{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--ink);font:inherit;font-size:14px;cursor:pointer;box-shadow:var(--shadow);text-align:start}
+.suggest button:hover{border-color:var(--accent)}
+.suggest small{display:block;color:var(--muted);font-size:12px;margin-bottom:2px}
+.msg{display:flex;margin:16px 0}
+.msg.user{justify-content:flex-end}
+.bubble{max-width:100%;border-radius:14px;padding:12px 16px}
+.user .bubble{background:var(--user);color:var(--user-ink);max-width:80%;white-space:pre-wrap;border-bottom-right-radius:4px}
+.bot .bubble{background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);width:100%}
+.bubble p{margin:.4em 0}.bubble ul,.bubble ol{margin:.4em 0;padding-inline-start:1.3em}
+.bubble a{color:var(--brand);text-decoration:underline;text-underline-offset:2px;word-break:break-word}
+.bubble table{border-collapse:collapse;width:100%;font-size:13.5px;margin:8px 0;display:block;overflow-x:auto}
+.bubble th,.bubble td{border:1px solid var(--line);padding:6px 8px;text-align:start;vertical-align:top}
+.bubble th{background:var(--chip);font-weight:600}
+.bubble code{background:var(--code);padding:1px 5px;border-radius:5px;font-size:13px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.src{display:inline-flex;align-items:center;gap:6px;font-size:12px;background:var(--chip);color:var(--ink);border-radius:8px;padding:4px 8px;text-decoration:none;max-width:100%}
+.src:hover{outline:1px solid var(--accent)}
+.src .n{font-weight:700;color:var(--accent)}
+.src .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px}
+.tag{font-size:10px;text-transform:uppercase;letter-spacing:.4px;padding:1px 5px;border-radius:4px;background:var(--brand);color:var(--brand-ink)}
+.tag.w{background:var(--accent)}
+.foot{font-size:11.5px;color:var(--muted);margin-top:6px}
+.filters{font-size:12px;color:var(--muted);margin-bottom:6px}
+.err{color:#c0392b}
+.typing span{display:inline-block;width:6px;height:6px;margin-right:3px;border-radius:50%;background:var(--muted);animation:b 1s infinite}
+.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,80%,100%{opacity:.25}40%{opacity:1}}
+footer{border-top:1px solid var(--line);background:var(--panel)}
+form{max-width:860px;margin:0 auto;padding:12px 16px;display:flex;gap:10px;align-items:flex-end}
+textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:12px;padding:11px 14px;font:inherit;background:var(--bg);color:var(--ink);max-height:160px;min-height:46px}
+textarea:focus{outline:2px solid var(--brand);outline-offset:-1px}
+.send{height:46px;padding:0 18px;border:0;border-radius:12px;background:var(--brand);color:var(--brand-ink);font:inherit;font-weight:600;cursor:pointer}
+.send:disabled{opacity:.5;cursor:default}
+.disclaimer{text-align:center;font-size:11.5px;color:var(--muted);padding:0 16px 10px}
+@media (max-width:640px){header .pill{display:none}.hero h2{font-size:21px}.user .bubble{max-width:92%}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">DW</div>
+  <div><h1>Property Assistant</h1><div class="sub">DarGlobal projects · Wasalt listings</div></div>
+  <div class="sp"></div>
+  <span class="pill" id="kb">Loading knowledge base…</span>
+  <button class="icon" id="theme" title="Toggle theme">◐</button>
+  <button class="icon" id="reset" title="New chat">New chat</button>
+</header>
+<main id="scroll"><div class="wrap" id="chat">
+  <section class="hero" id="hero">
+    <h2>Ask about luxury projects and Saudi property listings</h2>
+    <p>Answers are grounded in data collected from darglobal.co.uk and wasalt.sa, with clickable sources. English and Arabic supported.</p>
+    <div class="suggest" id="suggest"></div>
+  </section>
+</div></main>
+<footer>
+  <form id="f">
+    <textarea id="q" rows="1" dir="auto" placeholder="e.g. 3-bedroom apartments for sale in Riyadh under 1M SAR" autocomplete="off"></textarea>
+    <button class="send" id="send" type="submit">Send</button>
+  </form>
+  <div class="disclaimer">AI-generated answers can be wrong. Prices and availability change - always confirm on the official website. Not financial advice.</div>
+</footer>
+<script>
+const $ = s => document.querySelector(s);
+const chatEl = $("#chat"), scrollEl = $("#scroll"), q = $("#q"), send = $("#send");
+let history = [];
+const SUGGEST = [
+  ["DarGlobal", "Which branded luxury projects does DarGlobal have?"],
+  ["DarGlobal", "Tell me about DarGlobal's projects in Oman (AIDA)."],
+  ["Wasalt", "3-bedroom apartments for sale in Riyadh under 1M SAR"],
+  ["Wasalt", "Villas for rent in Jeddah - what's the typical price?"],
+  ["Market", "Is buying property in Riyadh a good investment?"],
+  ["عربي", "ما هي الفلل المتاحة للبيع في الدمام؟"],
+];
+$("#suggest").innerHTML = SUGGEST.map(([k,t]) => `<button data-q="${t.replace(/"/g,'&quot;')}"><small>${k}</small>${t}</button>`).join("");
+$("#suggest").addEventListener("click", e => { const b = e.target.closest("button"); if (b) ask(b.dataset.q); });
+
+try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+$("#theme").onclick = () => {
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  const cur = document.documentElement.dataset.theme || (dark ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem("theme", next); } catch {}
+};
+$("#reset").onclick = () => { history = []; chatEl.querySelectorAll(".msg").forEach(n => n.remove()); $("#hero").style.display = ""; q.focus(); };
+
+fetch("/api/stats").then(r => r.json()).then(m => {
+  const k = m.by_source_kind || {};
+  const dg = Object.entries(k).filter(([n]) => n.startsWith("darglobal")).reduce((a,[,v]) => a+v, 0);
+  $("#kb").innerHTML = `<b>${m.wasalt_listings}</b> Wasalt listings · <b>${dg}</b> DarGlobal docs · updated ${m.built_at.slice(0,10)}`;
+}).catch(() => $("#kb").textContent = "Knowledge base");
+
+q.addEventListener("input", () => { q.style.height = "auto"; q.style.height = Math.min(q.scrollHeight, 160) + "px"; });
+q.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("#f").requestSubmit(); } });
+$("#f").onsubmit = e => { e.preventDefault(); const t = q.value.trim(); if (t) ask(t); };
+
+marked.setOptions({ breaks: true, gfm: true });
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+function render(md) {
+  const html = DOMPurify.sanitize(marked.parse(md));
+  return html.replace(/\[(\d{1,2})\]/g, '<a href="#" class="cite" data-n="$1">[$1]</a>');
+}
+function addMsg(role, html) {
+  $("#hero").style.display = "none";
+  const d = document.createElement("div");
+  d.className = "msg " + role;
+  d.innerHTML = `<div class="bubble" dir="auto">${html}</div>`;
+  chatEl.appendChild(d);
+  scrollEl.scrollTop = scrollEl.scrollHeight;
+  return d.querySelector(".bubble");
+}
+
+async function ask(text) {
+  if (send.disabled) return;
+  q.value = ""; q.style.height = "auto";
+  addMsg("user", esc(text));
+  history.push({ role: "user", content: text });
+  const bubble = addMsg("bot", '<div class="typing"><span></span><span></span><span></span></div>');
+  send.disabled = true;
+  let answer = "", sources = [], filters = {}, done = null, err = null;
+  const body = document.createElement("div"), meta = document.createElement("div");
+
+  const paint = () => {
+    const f = Object.entries(filters).filter(([k]) => k !== "prefer").map(([k,v]) => `${k}: ${v}`).join(" · ");
+    bubble.innerHTML = (f ? `<div class="filters">Filters understood → ${esc(f)}</div>` : "") +
+      (answer ? render(answer) : (err ? "" : '<div class="typing"><span></span><span></span><span></span></div>')) +
+      (err ? `<p class="err">${esc(err)}</p>` : "");
+    if (done && sources.length) {
+      bubble.insertAdjacentHTML("beforeend", '<div class="meta">' + sources.map(s =>
+        `<a class="src" target="_blank" rel="noopener" href="${esc(s.url)}" title="${esc(s.title)}">
+           <span class="n">${s.n}</span><span class="tag ${s.source === "wasalt" ? "w" : ""}">${s.source === "wasalt" ? "Wasalt" : "DarGlobal"}</span>
+           <span class="t">${esc(s.title)}</span></a>`).join("") + "</div>" +
+        `<div class="foot">Model: ${esc(done.model || "")} · ${done.seconds}s</div>`);
+    }
+    bubble.querySelectorAll("a.cite").forEach(a => {
+      const s = sources[+a.dataset.n - 1];
+      if (s) { a.href = s.url; a.target = "_blank"; a.rel = "noopener"; a.title = s.title; }
+    });
+    scrollEl.scrollTop = scrollEl.scrollHeight;
+  };
+
+  try {
+    const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify({ messages: history.slice(-12) }) });
+    if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.detail || `HTTP ${res.status}`); }
+    const reader = res.body.getReader(), dec = new TextDecoder();
+    let buf = "";
+    while (true) {
+      const { value, done: end } = await reader.read();
+      if (end) break;
+      buf += dec.decode(value, { stream: true });
+      let i;
+      while ((i = buf.indexOf("\n\n")) >= 0) {
+        const raw = buf.slice(0, i); buf = buf.slice(i + 2);
+        const ev = (raw.match(/^event: (.*)$/m) || [])[1], dl = (raw.match(/^data: (.*)$/m) || [])[1];
+        if (!ev || dl === undefined) continue;
+        const data = JSON.parse(dl);
+        if (ev === "sources") { sources = data.sources; filters = data.filters || {}; }
+        else if (ev === "token") answer += data;
+        else if (ev === "done") done = data;
+        else if (ev === "error") err = data;
+        paint();
+      }
+    }
+  } catch (e) { err = e.message || String(e); paint(); }
+  if (answer) history.push({ role: "assistant", content: answer });
+  else history.pop();
+  send.disabled = false; q.focus();
+}
+q.focus();
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+.venv
+__pycache__
+*.pyc
+.env
+data/raw
+data/darglobal_html
+data/*.log
+models
+scraper
+.git

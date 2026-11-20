@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: darglobal-wasalt-assistant
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false          # entered in the Render dashboard, never committed
+      - key: OPENROUTER_MODELS
+        value: nvidia/nemotron-3.5-lightning:free,google/gemma-4-31b-it:free,nvidia/nemotron-3-ultra-550b-a55b:free,baidu/ernie-5.5-flash-preview:free,dots-studio/dots-3-note-preview:free
+      - key: RATE_LIMIT_PER_5MIN
+        value: "20"
