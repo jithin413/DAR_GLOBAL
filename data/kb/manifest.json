@@ -1,7 +1,9 @@
 {
-  "built_at": "2026-11-20 08:02 UTC",
-  "documents": 140,
+  "built_at": "2026-11-20 09:07 UTC",
+  "documents": 1367,
   "by_source_kind": {
+    "wasalt:listing": 677,
+    "wasalt:market_guide": 550,
     "darglobal:page": 20,
     "darglobal:projects": 60,
     "darglobal:one-of-one": 7,
@@ -14,6 +16,67 @@
     "darglobal:blog": 22,
     "darglobal:overview": 3
   },
-  "wasalt_listings": 0,
-  "cities": []
+  "wasalt_listings": 677,
+  "cities": [
+    [
+      "riyadh",
+      316
+    ],
+    [
+      "jeddah",
+      246
+    ],
+    [
+      "khobar",
+      28
+    ],
+    [
+      "aldammam",
+      19
+    ],
+    [
+      "makkah al mukarramah",
+      15
+    ],
+    [
+      "madinah",
+      10
+    ],
+    [
+      "abha",
+      7
+    ],
+    [
+      "bariduh",
+      7
+    ],
+    [
+      "jazan",
+      6
+    ],
+    [
+      "al ahsa",
+      3
+    ],
+    [
+      "tbwk",
+      2
+    ],
+    [
+      "hayil",
+      2
+    ],
+    [
+      "al-ula",
+      1
+    ],
+    [
+      "alqarn mukhatat wadi alfare",
+      1
+    ],
+    [
+      "jubail",
+      1
+    ]
+  ]
 }
